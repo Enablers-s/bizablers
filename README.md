@@ -16,3 +16,8 @@ enabler/
 ```
 
 When a brand gets its own domain, change its line in `SITES`.
+
+## Deploying on Vercel
+Static site, no build step (Framework preset: **Other**, no build command, output directory = repo root). `vercel.json` sets the security headers (CSP, clickjacking and MIME-sniffing protection, referrer and permissions policies) and long caching for fonts and media; `.vercelignore` keeps this README and dot-files out of the published site.
+
+After deploying, replace the local `../…/index.html` paths in the `SITES` list (top of `main.js`) with the live URLs of Enabler-S and the sister brands.
