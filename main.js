@@ -3,9 +3,19 @@
   'use strict';
   document.documentElement.classList.add('js');
 
-  // Addresses of Enabler-S and the sister brand sites. Each brand is its own repo; locally they sit
-  // side by side in one folder. When a brand goes live on its own domain, change its line here.
-  const SITES = {
+  // Addresses of Enabler-S and the sister brand sites (each brand is its own repo and Vercel project).
+  // The HTML links point at the live sites; when the page is opened from disk or localhost they are
+  // switched to the side-by-side local folders instead. To move a brand to its own domain, change LIVE
+  // here and the matching href in index.html.
+  const LIVE = {
+    enabler: 'https://enabler-s.vercel.app/',
+    bizablers: 'https://bizablers.vercel.app/',
+    finablers: 'https://finablers.vercel.app/',
+    trustablers: 'https://trustablers.vercel.app/',
+    brandora: 'https://brandora-s.vercel.app/',
+    movera: 'https://moveraglobal.com/',
+  };
+  const LOCAL = {
     enabler: '../webpage1/index.html',
     bizablers: '../bizablers/index.html',
     finablers: '../finablers/index.html',
@@ -13,6 +23,8 @@
     brandora: '../brandora/index.html',
     movera: 'https://moveraglobal.com/',
   };
+  const isLocal = location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname);
+  const SITES = isLocal ? LOCAL : LIVE;
   document.querySelectorAll('[data-link]').forEach((a) => { if (SITES[a.dataset.link]) a.href = SITES[a.dataset.link]; });
   const $ = (id) => document.getElementById(id);
 
