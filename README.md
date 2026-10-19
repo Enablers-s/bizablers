@@ -1,6 +1,6 @@
-# Bizablers website
+# Bizabler-S website
 
-Static website for **Bizablers**, part of the Enabler-S group.
+Static website for **Bizabler-S**, part of the Enabler-S group.
 
 - `index.html`, `styles.css`, `main.js`: the site (no build step; open `index.html`)
 - `assets/`: logos and media used by this site
@@ -17,6 +17,14 @@ enabler/
 
 When a brand gets its own domain, change its line in `SITES`.
 
+## Where enquiries go
+The contact form (home page) and the "Send me this quote" form (calculator) post to the Google Form
+**Bizabler-S website enquiries** in the enablers26@gmail.com Google account. Each enquiry becomes a row in its
+linked Google Sheet (Forms → Responses → View in Sheets). The form address and question IDs are in `lead-form.js`.
+WhatsApp buttons go straight to +971 54 558 6455; nothing from them is stored.
+
+Calculator prices live in `calculator-data.js`.
+
 ## Deploying on Vercel
 Import this repo in Vercel as a new project named **`bizablers`**: Framework preset **Other**, no build command, no output directory (the repo root is the site). Nothing else to configure; there are no environment variables.
 
@@ -25,7 +33,7 @@ The five sites link to each other at these addresses (set in main.js (LIVE) and 
 | Site | GitHub repo | Vercel project name | Live address |
 |---|---|---|---|
 | Enabler-S | Enablers-s/enabler-s | `enabler-s` | https://enabler-s.vercel.app |
-| Bizablers | Enablers-s/bizablers | `bizablers` | https://bizablers.vercel.app |
+| Bizabler-S | Enablers-s/bizablers | `bizablers` | https://bizablers.vercel.app |
 | Finablers | Enablers-s/finablers | `finablers` | https://finablers.vercel.app |
 | Trustablers | Enablers-s/trustablers | `trustablers` | https://trustablers.vercel.app |
 | Brandora | Enablers-s/brandora | `brandora-s` (brandora.vercel.app is taken) | https://brandora-s.vercel.app |

@@ -1,4 +1,4 @@
-// Bizablers site: mobile menu, reveal-on-scroll, and the enquiry form (opens an email draft; no backend yet).
+// Bizabler-S site: mobile menu, reveal-on-scroll, and the enquiry form (sent to Google Forms via lead-form.js).
 (() => {
   'use strict';
   document.documentElement.classList.add('js');
@@ -50,19 +50,29 @@
     io.observe(el);
   });
 
-  // Enquiry form → pre-filled email to the Enabler-S inbox
+  // Enquiry form → Google Form (rows land in the linked Google Sheet)
   const form = $('form');
   const status = $('form-status');
-  form.addEventListener('submit', (e) => {
+  const btn = form.querySelector('button[type="submit"]');
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(form));
-    if (!d.name.trim() || !/^\S+@\S+\.\S+$/.test(d.email)) {
-      status.textContent = 'Please add your name and a valid email.';
+    const L = window.BIZ_LEAD;
+    if (!d.name.trim() || !L.validEmail(d.email) || !L.validPhone(d.phone)) {
+      status.textContent = 'Please add your name, a valid email and a phone or WhatsApp number.';
       return;
     }
-    const body = `Name: ${d.name}\nEmail: ${d.email}\nCompany: ${d.company || '-'}\nNeed: ${d.need}\n\n${d.message || ''}`;
-    window.location.href = `mailto:Hello@enabler-s.com?subject=${encodeURIComponent('Bizablers enquiry: ' + d.need)}&body=${encodeURIComponent(body)}`;
-    status.textContent = 'Opening your email app with the enquiry filled in…';
+    btn.disabled = true;
+    status.textContent = 'Sending…';
+    try {
+      await L.send({ ...d, source: 'Home page form' });
+      form.reset();
+      status.textContent = 'Thank you. Your enquiry has been sent and our team will be in touch soon.';
+    } catch (err) {
+      status.innerHTML = 'Sorry, it could not be sent. Please email <a href="mailto:Hello@enabler-s.com">Hello@enabler-s.com</a> or WhatsApp <a href="https://wa.me/971545586455">+971 54 558 6455</a>.';
+    } finally {
+      btn.disabled = false;
+    }
   });
 
   $('year').textContent = new Date().getFullYear();

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>UAE Business Setup Cost Calculator | Bizabler-S</title>
+  <meta name="description" content="See the full cost of setting up a company in the UAE, line by line, with no form to fill: every free zone and mainland option compared, visas itemised, year-2 renewal and 3-year cost included.">
+  <link rel="canonical" href="https://bizablers.vercel.app/calculator">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Bizabler-S">
+  <meta property="og:title" content="UAE Business Setup Cost Calculator | Bizabler-S">
+  <meta property="og:description" content="Every line of your UAE setup cost, compared across free zones and mainland. No email needed to see the numbers.">
+  <meta property="og:url" content="https://bizablers.vercel.app/calculator">
+  <meta property="og:image" content="https://bizablers.vercel.app/assets/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#2a1a0e">
+  <link rel="icon" href="assets/bizablers-mark.png" type="image/png">
+  <link rel="preload" href="fonts/files/outfit-normal-latin-c8e7a7.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/files/playfair-display-normal-latin-9deeae.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="calculator.css">
+  <script src="lead-form.js" defer></script>
+  <script src="calculator-data.js" defer></script>
+  <script src="calculator.js" defer></script>
+</head>
+<body class="calc-page">
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="top" id="top">
+    <a class="brand" href="index.html" aria-label="Bizabler-S home">
+      <img src="assets/bizablers-mark.png" alt="" width="256" height="256">
+      <span>Bizabler-S</span>
+    </a>
+    <nav aria-label="Main">
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+      <ul id="menu">
+        <li><a href="index.html#setup">Company setup</a></li>
+        <li><a href="index.html#services">Services</a></li>
+        <li><a href="index.html#freezones">Free zones</a></li>
+        <li><a href="calculator.html" aria-current="page">Cost calculator</a></li>
+        <li><a href="https://enabler-s.vercel.app/" data-link="enabler" class="parent">Enabler-S <span aria-hidden="true">↗</span></a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="calc-hero">
+      <div class="wrap">
+        <p class="eyebrow">Setup cost calculator</p>
+        <h1>Your full setup cost. <em>Every line, no email needed.</em></h1>
+        <p class="lede">Answer a few questions and watch the price update. We compare every zone for your exact setup, itemise each visa, show next year's renewal and include our own fee. Fees checked <span data-checked></span>.</p>
+        <ul class="promise">
+          <li>No form before the price</li>
+          <li>Year 1, year 2 &amp; 3-year cost</li>
+          <li>Our fee shown, not hidden</li>
+          <li>Each fee tagged published or estimate</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="calc">
+      <div class="wrap calc-grid">
+        <!-- Inputs -->
+        <form class="calc-form" id="calc-form" novalidate>
+          <fieldset>
+            <legend><span>01</span>What will your company do?</legend>
+            <div class="chips" id="in-activity" role="radiogroup" aria-label="Business activity"></div>
+          </fieldset>
+
+          <fieldset>
+            <legend><span>02</span>Who are your customers?</legend>
+            <div class="chips" id="in-customers" role="radiogroup" aria-label="Customers"></div>
+          </fieldset>
+
+          <fieldset>
+            <legend><span>03</span>People</legend>
+            <div class="steppers">
+              <div class="stepper" data-key="owners" data-min="1" data-max="20"><span class="s-label">Shareholders</span></div>
+              <div class="stepper" data-key="investors" data-min="0" data-max="20"><span class="s-label">Owner / investor visas<small>Shareholders who will live in the UAE</small></span></div>
+              <div class="stepper" data-key="employees" data-min="0" data-max="50"><span class="s-label">Employee visas</span></div>
+              <div class="stepper" data-key="dependants" data-min="0" data-max="20"><span class="s-label">Family visas<small>Spouse and children</small></span></div>
+            </div>
+            <label class="check"><input type="checkbox" name="inside"> <span>Visa holders are already inside the UAE <small>(adds change of status)</small></span></label>
+          </fieldset>
+
+          <fieldset>
+            <legend><span>04</span>Workspace</legend>
+            <div class="chips" id="in-office" role="radiogroup" aria-label="Workspace">
+              <button type="button" class="chip" data-value="flexi" aria-pressed="false">Flexi-desk / co-working</button>
+              <button type="button" class="chip" data-value="office" aria-pressed="false">Private office</button>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend><span>05</span>Expected yearly revenue <small>(for tax flags only)</small></legend>
+            <div class="chips" id="in-revenue" role="radiogroup" aria-label="Expected revenue">
+              <button type="button" class="chip" data-value="0" aria-pressed="false">Under AED 187.5k</button>
+              <button type="button" class="chip" data-value="1" aria-pressed="false">AED 187.5k–375k</button>
+              <button type="button" class="chip" data-value="2" aria-pressed="false">AED 375k–3M</button>
+              <button type="button" class="chip" data-value="3" aria-pressed="false">Over AED 3M</button>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend><span>06</span>Add-ons <small>(optional)</small></legend>
+            <div class="addons" id="in-addons"></div>
+          </fieldset>
+        </form>
+
+        <!-- Results -->
+        <div class="calc-out" aria-live="polite">
+          <div class="out-bar">
+            <label for="in-currency">Show in</label>
+            <select id="in-currency"></select>
+          </div>
+
+          <article class="pick" id="pick"></article>
+
+          <section class="compare">
+            <h2>All options for your setup</h2>
+            <p class="compare-note">Ranked by 3-year cost, with a nudge for zones built for your activity and customers. Tap one to see its breakdown.</p>
+            <ol id="compare-list"></ol>
+          </section>
+
+          <section class="share">
+            <h2>Keep this quote</h2>
+            <div class="share-actions">
+              <a class="btn btn-bronze" id="act-wa" target="_blank" rel="noopener">Send to WhatsApp</a>
+              <a class="btn btn-outline" id="act-mail">Email it to us</a>
+              <button class="btn btn-outline" type="button" id="act-link">Copy link</button>
+              <button class="btn btn-outline" type="button" id="act-print">Save as PDF</button>
+            </div>
+            <p class="share-status" id="share-status" role="status"></p>
+
+            <form class="quote-form" id="quote-form" novalidate>
+              <h3>Get this quote confirmed in writing</h3>
+              <p>Optional. We check every fee for your exact activity and send a formal quote, usually the same working day.</p>
+              <div class="qf-grid">
+                <label>Full name<input name="name" autocomplete="name" required></label>
+                <label>Email<input name="email" type="email" autocomplete="email" required></label>
+                <label>Phone / WhatsApp<input name="phone" type="tel" autocomplete="tel" placeholder="+971 …" required></label>
+                <label class="qf-wide">Anything we should know? <small>(optional)</small><textarea name="message" rows="3" placeholder="e.g. I'm moving from India in March and need 2 partner visas"></textarea></label>
+              </div>
+              <button class="btn btn-bronze" type="submit">Send me this quote</button>
+              <p class="qf-status" id="qf-status" role="status"></p>
+            </form>
+          </section>
+
+          <p class="disclaimer">Indicative estimate, not a binding offer. Authority fees change and some depend on activity, nationality and approvals. "Published" fees come from the authority's own site; "Estimate" fees come from partner quotes and are confirmed in your written quote. Currency conversions are approximate.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Phones: the running total stays on screen while the inputs are being changed -->
+    <div class="peek" id="peek">
+      <a class="peek-main" href="#pick"><span>Year 1, all in<b id="peek-total"></b></span><em id="peek-zone"></em></a>
+      <a class="peek-wa" id="peek-wa" target="_blank" rel="noopener" aria-label="Send this quote on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <a class="brand" href="index.html"><img src="assets/bizablers-mark.png" alt="" width="256" height="256"><span>Bizabler-S</span></a>
+      <p>The licensing &amp; strategic advisory arm of <a href="https://enabler-s.vercel.app/" data-link="enabler">Enabler-S</a></p>
+      <p class="fine">© <span id="year"></span> Enabler-S FZE LLC. All rights reserved.</p>
+    </div>
+  </footer>
+  <!-- Floating WhatsApp chat button (same number as the contact section) -->
+  <a class="wa-float" href="https://wa.me/971545586455?text=Hello%20Bizabler-S%2C%20I%27d%20like%20to%20talk%20about%20setting%20up%20a%20company." target="_blank" rel="noopener" aria-label="Chat with Bizabler-S on WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    <span>Chat on WhatsApp</span>
+  </a>
+</body>
+</html>

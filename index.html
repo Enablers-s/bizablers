@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Bizablers | Global Licensing &amp; Strategic Advisory by Enabler-S</title>
-  <meta name="description" content="Bizablers is the licensing and strategic advisory arm of Enabler-S: company formation, mainland, free zone and international structuring, business plans, joint ventures, M&A and multi-country expansion.">
+  <title>Bizabler-S | Global Licensing &amp; Strategic Advisory by Enabler-S</title>
+  <meta name="description" content="Bizabler-S is the licensing and strategic advisory arm of Enabler-S: company formation, mainland, free zone and international structuring, business plans, joint ventures, M&A and multi-country expansion.">
   <link rel="canonical" href="https://bizablers.vercel.app/">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Bizablers">
-  <meta property="og:title" content="Bizablers | Global Licensing &amp; Strategic Advisory by Enabler-S">
-  <meta property="og:description" content="Bizablers is the licensing and strategic advisory arm of Enabler-S: company formation, mainland, free zone and international structuring, business plans, joint ventures, M&amp;A and multi-country expansion.">
+  <meta property="og:site_name" content="Bizabler-S">
+  <meta property="og:title" content="Bizabler-S | Global Licensing &amp; Strategic Advisory by Enabler-S">
+  <meta property="og:description" content="Bizabler-S is the licensing and strategic advisory arm of Enabler-S: company formation, mainland, free zone and international structuring, business plans, joint ventures, M&amp;A and multi-country expansion.">
   <meta property="og:url" content="https://bizablers.vercel.app/">
   <meta property="og:image" content="https://bizablers.vercel.app/assets/og.jpg">
   <meta property="og:image:width" content="1200">
@@ -22,15 +22,16 @@
   <link rel="preload" href="fonts/files/playfair-display-normal-latin-9deeae.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="fonts/fonts.css">
   <link rel="stylesheet" href="styles.css">
+  <script src="lead-form.js" defer></script>
   <script src="main.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
 
   <header class="top" id="top">
-    <a class="brand" href="#top" aria-label="Bizablers home">
+    <a class="brand" href="#top" aria-label="Bizabler-S home">
       <img src="assets/bizablers-mark.png" alt="" width="256" height="256">
-      <span>Bizablers</span>
+      <span>Bizabler-S</span>
     </a>
     <nav aria-label="Main">
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
@@ -38,6 +39,7 @@
         <li><a href="#setup">Company setup</a></li>
         <li><a href="#services">Services</a></li>
         <li><a href="#freezones">Free zones</a></li>
+        <li><a href="calculator.html">Cost calculator</a></li>
         <li><a href="https://enabler-s.vercel.app/" data-link="enabler" class="parent">Enabler-S <span aria-hidden="true">↗</span></a></li>
         <li><a class="btn btn-bronze btn-sm" href="#contact">Start your company</a></li>
       </ul>
@@ -50,10 +52,10 @@
       <div class="hero-copy">
         <p class="eyebrow">Global Licensing &amp; Strategic Advisory</p>
         <h1>Switch on your business. <em>In any market.</em></h1>
-        <p class="lede">Bizablers is the licensing and strategic advisory arm of Enabler-S. We set up, structure and scale companies, from the first trade licence to joint ventures, acquisitions and branches across borders.</p>
+        <p class="lede">Bizabler-S is the licensing and strategic advisory arm of Enabler-S. We set up, structure and scale companies, from the first trade licence to joint ventures, acquisitions and branches across borders.</p>
         <div class="actions">
           <a class="btn btn-bronze" href="#contact">Start your company</a>
-          <a class="btn btn-outline" href="#setup">Compare setup options</a>
+          <a class="btn btn-outline" href="calculator.html">Calculate your setup cost</a>
         </div>
         <ul class="proof">
           <li><b>Mainland · Free zone</b><span>&amp; international structuring</span></li>
@@ -110,7 +112,7 @@
       </div>
     </section>
 
-    <!-- Services: the 13 Bizablers services from the company profile, grouped -->
+    <!-- Services: the 13 Bizabler-S services from the company profile, grouped -->
     <section class="section dark" id="services">
       <div class="wrap">
         <p class="eyebrow light">Our services</p>
@@ -217,12 +219,14 @@
           <dl>
             <div><dt>Email</dt><dd><a href="mailto:Hello@enabler-s.com">Hello@enabler-s.com</a></dd></div>
             <div><dt>Phone</dt><dd><a href="tel:+971545586455">+971 54 558 6455</a></dd></div>
+            <div><dt>WhatsApp</dt><dd><a href="https://wa.me/971545586455?text=Hello%20Bizabler-S%2C%20I%27d%20like%20to%20talk%20about%20setting%20up%20a%20company." target="_blank" rel="noopener">Chat with us on WhatsApp ↗</a></dd></div>
             <div><dt>Office</dt><dd>Office No. 6, Street 61A, ARD Almaemuruh Center, Al Kazim Building, Al Garhoud, Dubai, UAE</dd></div>
           </dl>
         </div>
         <form class="form" id="form" novalidate>
           <div class="field"><label for="f-name">Full name</label><input id="f-name" name="name" autocomplete="name" required></div>
           <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
+          <div class="field"><label for="f-phone">Phone / WhatsApp</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder="+971 …" required></div>
           <div class="field"><label for="f-company">Company or business idea</label><input id="f-company" name="company" autocomplete="organization"></div>
           <div class="field">
             <label for="f-need">What do you need?</label>
@@ -246,10 +250,15 @@
 
   <footer class="foot">
     <div class="wrap foot-row">
-      <a class="brand" href="#top"><img src="assets/bizablers-mark.png" alt="" width="256" height="256"><span>Bizablers</span></a>
+      <a class="brand" href="#top"><img src="assets/bizablers-mark.png" alt="" width="256" height="256"><span>Bizabler-S</span></a>
       <p>The licensing &amp; strategic advisory arm of <a href="https://enabler-s.vercel.app/" data-link="enabler">Enabler-S</a></p>
       <p class="fine">© <span id="year"></span> Enabler-S FZE LLC. All rights reserved.</p>
     </div>
   </footer>
+  <!-- Floating WhatsApp chat button (same number as the contact section) -->
+  <a class="wa-float" href="https://wa.me/971545586455?text=Hello%20Bizabler-S%2C%20I%27d%20like%20to%20talk%20about%20setting%20up%20a%20company." target="_blank" rel="noopener" aria-label="Chat with Bizabler-S on WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    <span>Chat on WhatsApp</span>
+  </a>
 </body>
 </html>

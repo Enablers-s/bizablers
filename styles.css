@@ -1,4 +1,4 @@
-/* Bizablers: licensing & strategic advisory arm of Enabler-S.
+/* Bizabler-S: licensing & strategic advisory arm of Enabler-S.
    Palette from the logo: brushed bronze on cream paper, with espresso for the dark sections.
    Motif: the power ring around the B ("switch on your business"). */
 :root {
@@ -213,6 +213,26 @@ h1 em, h2 em { font-style: italic; font-weight: 600; color: var(--bronze-600); }
 .foot .brand img { background: var(--cream); border-radius: 8px; padding: 3px; }
 .foot a { color: var(--bronze-300); }
 .fine { font-size: 0.85rem; }
+
+/* ---------- floating WhatsApp button ---------- */
+.wa-float { position: fixed; z-index: 45; right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); display: flex; align-items: center; justify-content: center;
+  min-width: 58px; height: 58px; padding: 0 14px; border-radius: 999px; text-decoration: none; color: #fff; background: #25d366;
+  box-shadow: 0 10px 26px rgba(18, 140, 70, 0.4); transition: transform .2s, box-shadow .2s; }
+.wa-float:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(18, 140, 70, 0.5); }
+.wa-float:focus-visible { outline: 3px solid var(--bronze-500); outline-offset: 3px; }
+.wa-float svg { width: 30px; height: 30px; fill: currentColor; flex: none; }
+/* the label slides out on hover; the button stays a round icon otherwise */
+.wa-float span { max-width: 0; overflow: hidden; white-space: nowrap; font: 600 0.95rem/1 var(--body); transition: max-width .3s, margin .3s; }
+.wa-float:hover span, .wa-float:focus-visible span { max-width: 160px; margin: 0 4px 0 10px; }
+.wa-float::before { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5);
+  animation: wa-ping 2.6s 1.5s ease-out infinite; }
+@keyframes wa-ping { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.45); } 70%, 100% { box-shadow: 0 0 0 16px rgba(37, 211, 102, 0); } }
+@media (prefers-reduced-motion: reduce) { .wa-float::before { animation: none; } .wa-float, .wa-float span { transition: none; } }
+@media print { .wa-float { display: none; } }
+@media (max-width: 860px) {
+  .form-in-view .wa-float { opacity: 0; pointer-events: none; transform: scale(0.8); }
+}
 
 /* reveal on scroll (only when JS has run) */
 .js .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s, transform .7s cubic-bezier(.2, .8, .2, 1); }
