@@ -10,20 +10,68 @@
 //   renewal      licence renewal from year 2
 //   maxVisas     most visas the base package / flexi-desk allows (null = depends on office size)
 //   fit          activities the zone suits: "strong" ranks it higher, "no" rules it out
+// the calculator.js script uses this data to build the UI and calculater
+// mainland is priced as one package per license type,the same in every emirate (market package rates,oct 2026).The package covers licence,initial approval,trade name,MOA,flexible and also create an set of data for the calculator to use
+// renewal=package minus the one-off setup items (`oneOff`). Override a price per emirate with `package` on that entry.
+// bizabler-s own fee,shown as a line in every qoute (no hidden fees).set before publishing.
+// optional add-ons the visitoe can tick
+//private office instead of the zone flexi deso
 (() => {
   'use strict';
 
   const CHECKED = 'October 2026';
 
+  // Licence type sets the mainland package price; `from` is shown on the choice card
+  const LICENCE_TYPES = [
+    { id: 'professional', label: 'Professional', desc: 'Services, consultancy, IT, marketing' },
+    { id: 'commercial', label: 'Commercial', desc: 'Trading in one family of goods' },
+    { id: 'general', label: 'General trading', desc: 'Any goods, import & export' },
+  ];
+
+  // Each activity belongs to a licence type; `fit` is the zone-fit category used in ZONES[].fit
   const ACTIVITIES = [
-    { id: 'trading', label: 'General trading / import & export' },
-    { id: 'consulting', label: 'Consultancy & professional services' },
-    { id: 'ecommerce', label: 'E-commerce & online business' },
-    { id: 'tech', label: 'Technology, IT & software' },
-    { id: 'media', label: 'Media, marketing & creative' },
-    { id: 'industrial', label: 'Industrial, manufacturing & logistics' },
-    { id: 'retail', label: 'Shop, restaurant or walk-in customers' },
-    { id: 'holding', label: 'Holding / owning assets only' },
+    { id: 'management', type: 'professional', fit: 'consulting', label: 'Management consultancy' },
+    { id: 'it', type: 'professional', fit: 'tech', label: 'IT consultancy & software' },
+    { id: 'marketing', type: 'professional', fit: 'media', label: 'Marketing, media & creative' },
+    { id: 'accounting', type: 'professional', fit: 'consulting', label: 'Accounting & bookkeeping' },
+    { id: 'hr', type: 'professional', fit: 'consulting', label: 'Human resource consultancy' },
+    { id: 'csp', type: 'professional', fit: 'consulting', label: 'Corporate service provider' },
+    { id: 'technical', type: 'professional', fit: 'consulting', label: 'Technical services' },
+    { id: 'ecommerce', type: 'professional', fit: 'ecommerce', label: 'E-commerce & online business' },
+    { id: 'cleaning', type: 'professional', fit: 'retail', label: 'Building cleaning services' },
+    { id: 'restaurant', type: 'professional', fit: 'retail', label: 'Restaurant management' },
+    { id: 'holding', type: 'professional', fit: 'holding', label: 'Holding company (owning shares or assets)' },
+    { id: 'foodstuff', type: 'commercial', fit: 'trading', label: 'Foodstuff trading' },
+    { id: 'building', type: 'commercial', fit: 'trading', label: 'Building material trading' },
+    { id: 'garments', type: 'commercial', fit: 'trading', label: 'Garments & footwear trading' },
+    { id: 'perfumes', type: 'commercial', fit: 'trading', label: 'Perfumes & cosmetics trading' },
+    { id: 'toys', type: 'commercial', fit: 'trading', label: 'Toys & games trading' },
+    { id: 'jewellery', type: 'commercial', fit: 'trading', label: 'Artificial jewellery trading' },
+    { id: 'stationery', type: 'commercial', fit: 'trading', label: 'Stationery trading' },
+    { id: 'medical', type: 'commercial', fit: 'trading', label: 'Medical equipment trading' },
+    { id: 'machinery', type: 'commercial', fit: 'industrial', label: 'Heavy machinery trading' },
+    { id: 'cars', type: 'commercial', fit: 'industrial', label: 'Used car trading' },
+    { id: 'logistics', type: 'commercial', fit: 'industrial', label: 'Logistics & light manufacturing' },
+    { id: 'shop', type: 'commercial', fit: 'retail', label: 'Retail shop (walk-in customers)' },
+    { id: 'general', type: 'general', fit: 'trading', label: 'General trading (any goods, import & export)' },
+  ];
+
+  // Mainland is priced as one package per licence type, the same in every emirate (market package rates, Oct 2026).
+  // The package covers licence, initial approval, trade name, MOA, flexi-desk Ejari and establishment card.
+  // Renewal = package minus the one-off setup items (`oneOff`). Override a price per emirate with `package` on that entry.
+  const MAINLAND = {
+    package: { professional: 25000, commercial: 35000, general: 45000 },
+    oneOff: 7000,
+    officeUpgrade: 30000,
+  };
+  const EMIRATES = [
+    { id: 'dubai', name: 'Dubai', authority: 'DET' },
+    { id: 'abudhabi', name: 'Abu Dhabi', authority: 'ADDED' },
+    { id: 'sharjah', name: 'Sharjah', authority: 'SEDD' },
+    { id: 'ajman', name: 'Ajman', authority: 'Ajman DED' },
+    { id: 'uaq', name: 'Umm Al Quwain', authority: 'UAQ DED' },
+    { id: 'rak', name: 'Ras Al Khaimah', authority: 'RAK DED' },
+    { id: 'fujairah', name: 'Fujairah', authority: 'Fujairah DED' },
   ];
 
   const CUSTOMERS = [
@@ -126,24 +174,14 @@
       note: 'Lowest-cost licence with one visa; monthly instalment plans available.',
     },
     {
-      id: 'dubai-mainland', name: 'Dubai Mainland (DET)', emirate: 'Dubai', type: 'mainland',
-      licence: 13900, visaUplift: 2000, visaUpliftRenewal: 1000, investorVisa: 3400, employeeVisa: 5500,
-      medEidIncluded: false, renewal: 10000, maxVisas: null, extraShareholder: { included: 99, fee: 0 },
-      rent: { flexi: 15000, office: 45000 }, rentLinkedFee: 0.05,
-      conf: { licence: 'est', visaUplift: 'est', visa: 'est', renewal: 'est', rent: 'est' },
-      src: 'DET government fees AED 13,900–16,200 (2026); licence includes 5% of annual rent',
+      // One row for all 7 emirates; calculator.js fills name, emirate, licence and renewal from EMIRATES and MAINLAND
+      id: 'mainland', name: 'Mainland', emirate: '', type: 'mainland',
+      licence: 0, visaUplift: 0, visaUpliftRenewal: 1000, investorVisa: 3400, employeeVisa: 5500,
+      medEidIncluded: false, renewal: 0, maxVisas: 2, office: 'Flexi-desk Ejari included', extraShareholder: { included: 99, fee: 0 },
+      conf: { licence: 'est', visaUplift: 'est', visa: 'est', renewal: 'est' },
+      src: 'UAE mainland consultancy package rates (Oct 2026), the same across all 7 emirates',
       fit: { retail: 'strong', trading: 'strong', consulting: 'ok', industrial: 'ok', holding: 'ok' },
-      note: 'Trade anywhere in the UAE, open a shop and bid for government work. Needs an Ejari office lease.',
-    },
-    {
-      id: 'ad-mainland', name: 'Abu Dhabi Mainland (ADDED)', emirate: 'Abu Dhabi', type: 'mainland',
-      licence: 1000, visaUplift: 2000, visaUpliftRenewal: 1000, investorVisa: 3400, employeeVisa: 5500,
-      medEidIncluded: false, renewal: 1000, maxVisas: null, extraShareholder: { included: 99, fee: 0 },
-      rent: { flexi: 12000, office: 40000 }, rentLinkedFee: 0,
-      conf: { licence: 'pub', visaUplift: 'est', visa: 'est', renewal: 'pub', rent: 'est' },
-      src: 'Abu Dhabi Media Office: setup and renewal AED 1,000 (still in force 2026)',
-      fit: { retail: 'strong', trading: 'ok', consulting: 'ok', industrial: 'ok' },
-      note: 'AED 1,000 licence and renewal; the main cost is the office lease.',
+      note: 'Trade anywhere in the UAE, open a shop and bid for government work. Flexi-desk Ejari carries up to 2 visas.',
     },
     {
       id: 'rakicc', name: 'RAK ICC Offshore', emirate: 'Ras Al Khaimah', type: 'offshore',
@@ -178,5 +216,5 @@
     INR: { rate: 23.5, label: 'INR' },
   };
 
-  window.BIZ_CALC_DATA = { CHECKED, ACTIVITIES, CUSTOMERS, VISA_COMMON, ZONES, SERVICE_FEE, ADDONS, FZ_OFFICE_UPGRADE, CURRENCIES };
+  window.BIZ_CALC_DATA = { CHECKED, LICENCE_TYPES, ACTIVITIES, MAINLAND, EMIRATES, CUSTOMERS, VISA_COMMON, ZONES, SERVICE_FEE, ADDONS, FZ_OFFICE_UPGRADE, CURRENCIES };
 })();

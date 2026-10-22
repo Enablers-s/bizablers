@@ -49,7 +49,7 @@
       <div class="wrap">
         <p class="eyebrow">Setup cost calculator</p>
         <h1>Your full setup cost. <em>Every line, no email needed.</em></h1>
-        <p class="lede">Answer a few questions and watch the price update. We compare every zone for your exact setup, itemise each visa, show next year's renewal and include our own fee. Fees checked <span data-checked></span>.</p>
+        <p class="lede">Answer six quick questions, one step at a time. We then compare every zone for your exact setup and recommend the best fit, with each visa itemised, next year's renewal shown and our own fee included. Fees checked <span data-checked></span>.</p>
         <ul class="promise">
           <li>No form before the price</li>
           <li>Year 1, year 2 &amp; 3-year cost</li>
@@ -59,13 +59,20 @@
       </div>
     </section>
 
-    <section class="calc">
+    <section class="calc" id="calc">
       <div class="wrap calc-grid">
-        <!-- Inputs -->
+        <!-- Inputs: one step at a time, then the recommendations -->
         <form class="calc-form" id="calc-form" novalidate>
+          <div class="wiz-progress">
+            <p id="wiz-count" aria-live="polite"></p>
+            <ol class="wiz-dots" id="wiz-dots" aria-label="Steps"></ol>
+          </div>
           <fieldset>
             <legend><span>01</span>What will your company do?</legend>
-            <div class="chips" id="in-activity" role="radiogroup" aria-label="Business activity"></div>
+            <div class="types" id="in-type" role="radiogroup" aria-label="Licence type"></div>
+            <label class="calc-field" for="in-activity">Main activity
+              <select id="in-activity"></select>
+            </label>
           </fieldset>
 
           <fieldset>
@@ -74,7 +81,7 @@
           </fieldset>
 
           <fieldset>
-            <legend><span>03</span>People</legend>
+            <legend><span>03</span>Who needs a UAE visa?</legend>
             <div class="steppers">
               <div class="stepper" data-key="owners" data-min="1" data-max="20"><span class="s-label">Shareholders</span></div>
               <div class="stepper" data-key="investors" data-min="0" data-max="20"><span class="s-label">Owner / investor visas<small>Shareholders who will live in the UAE</small></span></div>
@@ -85,7 +92,7 @@
           </fieldset>
 
           <fieldset>
-            <legend><span>04</span>Workspace</legend>
+            <legend><span>04</span>What workspace do you need?</legend>
             <div class="chips" id="in-office" role="radiogroup" aria-label="Workspace">
               <button type="button" class="chip" data-value="flexi" aria-pressed="false">Flexi-desk / co-working</button>
               <button type="button" class="chip" data-value="office" aria-pressed="false">Private office</button>
@@ -103,22 +110,38 @@
           </fieldset>
 
           <fieldset>
-            <legend><span>06</span>Add-ons <small>(optional)</small></legend>
+            <legend><span>06</span>Anything else we should handle? <small>(optional)</small></legend>
             <div class="addons" id="in-addons"></div>
           </fieldset>
+
+          <div class="wiz-nav">
+            <button class="btn btn-outline" type="button" id="wiz-back">Back</button>
+            <button class="btn btn-bronze" type="button" id="wiz-next">Next</button>
+          </div>
         </form>
 
         <!-- Results -->
-        <div class="calc-out" aria-live="polite">
+        <div class="calc-out" id="calc-out" hidden>
+          <div class="answers">
+            <div class="answers-head">
+              <h2 id="results-title" tabindex="-1">Our recommendation for you</h2>
+              <button class="btn btn-outline btn-sm" type="button" id="edit-answers">Change answers</button>
+            </div>
+            <ul id="answers-list"></ul>
+          </div>
           <div class="out-bar">
             <label for="in-currency">Show in</label>
             <select id="in-currency"></select>
           </div>
 
           <article class="pick" id="pick"></article>
+          <!-- Mainland emirate picker; moved into the pick card while a mainland option is shown -->
+          <label class="calc-emirate" id="emirate-ctl" hidden>Emirate
+            <select id="in-emirate"></select>
+          </label>
 
           <section class="compare">
-            <h2>All options for your setup</h2>
+            <h2>All options, ranked for you</h2>
             <p class="compare-note">Ranked by 3-year cost, with a nudge for zones built for your activity and customers. Tap one to see its breakdown.</p>
             <ol id="compare-list"></ol>
           </section>
@@ -152,11 +175,6 @@
       </div>
     </section>
 
-    <!-- Phones: the running total stays on screen while the inputs are being changed -->
-    <div class="peek" id="peek">
-      <a class="peek-main" href="#pick"><span>Year 1, all in<b id="peek-total"></b></span><em id="peek-zone"></em></a>
-      <a class="peek-wa" id="peek-wa" target="_blank" rel="noopener" aria-label="Send this quote on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
-    </div>
   </main>
 
   <footer class="foot">

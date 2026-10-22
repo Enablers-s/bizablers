@@ -26,7 +26,8 @@
   const EMAIL = 'Hello@enabler-s.com';
 
   // ---------- state (mirrored in the URL hash so a quote can be shared) ----------
-  const DEFAULTS = { a: 'consulting', c: 'intl', owners: 1, investors: 1, employees: 0, dependants: 0, inside: 0, w: 'flexi', r: 1, x: [], cur: 'AED', z: '' };
+  // `v` is 1 once the visitor has finished the steps, so a shared link opens straight on the recommendations
+  const DEFAULTS = { a: 'management', e: 'dubai', c: 'intl', owners: 1, investors: 1, employees: 0, dependants: 0, inside: 0, w: 'flexi', r: 1, x: [], cur: 'AED', z: '', v: 0 };
   const state = { ...DEFAULTS };
   try {
     const p = new URLSearchParams(location.hash.slice(1));
@@ -37,6 +38,8 @@
       else state[k] = typeof DEFAULTS[k] === 'number' ? Math.max(0, parseInt(v, 10) || 0) : v;
     }
     if (!D.CURRENCIES[state.cur]) state.cur = 'AED';
+    if (!D.ACTIVITIES.some((a) => a.id === state.a)) state.a = DEFAULTS.a;
+    if (!D.EMIRATES.some((e) => e.id === state.e)) state.e = DEFAULTS.e;
     if (state.owners < 1) state.owners = 1;
   } catch (e) { /* bad hash: keep defaults */ }
 
@@ -60,18 +63,28 @@
   const sum = (lines) => lines.reduce((t, l) => t + l.amount, 0);
 
   // ---------- pricing ----------
-  const activityLabel = () => D.ACTIVITIES.find((a) => a.id === state.a)?.label || '';
+  const activity = () => D.ACTIVITIES.find((a) => a.id === state.a);
+  const activityLabel = () => activity().label;
+  const licenceType = () => D.LICENCE_TYPES.find((t) => t.id === activity().type);
+  const fitOf = (z) => z.fit[activity().fit];
+
+  // Mainland is one row priced from the chosen emirate and licence type
+  function resolve(z) {
+    if (z.type !== 'mainland') return z;
+    const em = D.EMIRATES.find((e) => e.id === state.e);
+    const pkg = (em.package || D.MAINLAND.package)[activity().type];
+    return { ...z, name: `${em.name} Mainland`, emirate: `${em.name} · ${em.authority}`, licence: pkg, renewal: pkg - D.MAINLAND.oneOff };
+  }
 
   function maxVisas(z) {
     if (z.type === 'offshore') return 0;
     if (state.w === 'office') return null; // set by office size
-    if (z.type === 'mainland') return 3;   // a flexi-desk Ejari usually carries 1–3 visas
     return z.maxVisas;
   }
 
   function eligibility(z) {
     const visas = state.investors + state.employees;
-    const fit = z.fit[state.a];
+    const fit = fitOf(z);
     if (fit === 'no') return z.type === 'offshore'
       ? 'Offshore companies cannot trade or hold a UAE operating licence'
       : `Does not licence ${activityLabel().toLowerCase()}`;
@@ -92,19 +105,18 @@
     const add = (arr, group, label, amount, c, note) => { if (amount > 0) arr.push({ group, label, amount, conf: c, note }); };
 
     // company
-    add(y1, 'Licence & company', z.type === 'offshore' ? 'Incorporation & registered agent' : 'Trade licence & registration', z.licence, conf.licence);
+    const licLabel = z.type === 'offshore' ? 'Incorporation & registered agent'
+      : z.type === 'mainland' ? `${licenceType().label} licence package (licence, approvals, flexi-desk Ejari, establishment card)`
+        : 'Trade licence & registration';
+    add(y1, 'Licence & company', licLabel, z.licence, conf.licence);
     const extraSh = Math.max(0, state.owners - z.extraShareholder.included);
     add(y1, 'Licence & company', `Extra shareholders (${extraSh} × ${money(z.extraShareholder.fee)})`, extraSh * z.extraShareholder.fee, 'pub');
     if (visas) add(y1, 'Licence & company', 'Establishment & immigration card', z.visaUplift, conf.visaUplift);
 
     // workspace
     let rent = 0;
-    if (z.type === 'mainland') {
-      rent = z.rent[state.w];
-      add(y1, 'Workspace', state.w === 'office' ? 'Office lease with Ejari, first year (small office)' : 'Flexi-desk lease with Ejari, first year', rent, conf.rent);
-      add(y1, 'Licence & company', `Rent-linked licence fee (${z.rentLinkedFee * 100}% of rent)`, Math.round(rent * z.rentLinkedFee), 'pub');
-    } else if (z.type === 'freezone' && state.w === 'office') {
-      rent = D.FZ_OFFICE_UPGRADE;
+    if (z.type !== 'offshore' && state.w === 'office') {
+      rent = z.type === 'mainland' ? D.MAINLAND.officeUpgrade : D.FZ_OFFICE_UPGRADE;
       add(y1, 'Workspace', 'Private office instead of flexi-desk, first year', rent, 'est');
     }
 
@@ -129,7 +141,6 @@
     add(y2, 'Renewal', 'Licence renewal', z.renewal, conf.renewal);
     if (visas) add(y2, 'Renewal', 'Establishment & immigration card renewal', z.visaUpliftRenewal, conf.visaUplift);
     if (rent) add(y2, 'Renewal', 'Office / desk rent', rent, 'est');
-    if (z.type === 'mainland') add(y2, 'Renewal', 'Rent-linked licence fee', Math.round(rent * z.rentLinkedFee), 'pub');
     add(y2, 'Renewal', `Health insurance × ${people}`, people * C.insurance.amount, C.insurance.conf);
     addons.filter((a) => a.yearly).forEach((a) => add(y2, 'Renewal', a.label.replace(', first year', ''), a.amount, 'fixed'));
 
@@ -148,7 +159,7 @@
   }
 
   function score(z) {
-    const f = z.fit[state.a];
+    const f = fitOf(z);
     let s = f === 'strong' ? 2 : 0;
     if (z.type === 'mainland') s += state.c === 'local' ? 3 : state.c === 'b2b' ? 1 : 0;
     if (z.type === 'freezone' && state.c === 'intl') s += 1;
@@ -156,7 +167,7 @@
   }
 
   function rankAll() {
-    const rows = D.ZONES.map((z) => ({ z, why: eligibility(z), q: quote(z), s: score(z) }));
+    const rows = D.ZONES.map(resolve).map((z) => ({ z, why: eligibility(z), q: quote(z), s: score(z) }));
     // Cost-led: 3-year cost, with 10% off per fit point so a zone built for the activity can edge a slightly cheaper one
     rows.forEach((r) => { r.rank = r.q.three * (1 - 0.1 * r.s); });
     const ok = rows.filter((r) => !r.why).sort((a, b) => a.rank - b.rank);
@@ -167,7 +178,7 @@
   function reasons(row, ok) {
     const z = row.z;
     const out = [];
-    if (z.fit[state.a] === 'strong') out.push(`Strong fit for ${activityLabel().toLowerCase()}`);
+    if (fitOf(z) === 'strong') out.push(`Strong fit for ${activityLabel().toLowerCase()}`);
     const cheapest = ok.length && Math.min(...ok.map((r) => r.q.t1)) === row.q.t1;
     if (cheapest && ok.length > 1) out.push(`Lowest year-1 cost of the ${ok.length} options that fit your setup`);
     const cheapest3 = ok.length && Math.min(...ok.map((r) => r.q.three)) === row.q.three;
@@ -219,7 +230,8 @@
       <header class="pick-head">
         <span class="pick-badge">${isAuto ? 'Best match for you' : 'Your selection'}</span>
         <h2>${esc(z.name)}</h2>
-        <p class="pick-sub">${esc(z.emirate)} · ${z.type === 'freezone' ? 'Free zone' : z.type === 'mainland' ? 'Mainland' : 'Offshore'}${z.office && !(state.w === 'office' && z.type === 'freezone') ? ' · ' + esc(z.office) : ''}</p>
+        <p class="pick-sub">${esc(z.emirate)} · ${z.type === 'freezone' ? 'Free zone' : z.type === 'mainland' ? 'Mainland' : 'Offshore'}${z.office && state.w !== 'office' ? ' · ' + esc(z.office) : ''}</p>
+        ${z.type === 'mainland' ? '<div class="pick-emirate"></div>' : ''}
       </header>
       <div class="totals">
         <div class="t-main"><span>Year 1, all in</span><b>${money(q.t1)}</b></div>
@@ -266,7 +278,7 @@
     const low1 = Math.min(...ok.map((r) => r.q.t1));
     const li = (row, i) => {
       const { z, q, why } = row;
-      const tags = [z.fit[state.a] === 'strong' ? '<span class="fit">Strong fit</span>' : '', !why && q.t1 === low1 ? '<span class="fit">Lowest year 1</span>' : '']
+      const tags = [fitOf(z) === 'strong' ? '<span class="fit">Strong fit</span>' : '', !why && q.t1 === low1 ? '<span class="fit">Lowest year 1</span>' : '']
         .filter(Boolean).join(' · ');
       const nums = why ? '<span class="c-num c-na">Not available</span>' : `
             <span class="c-num"><small>Year 1</small>${money(q.t1)}</span>
@@ -292,9 +304,11 @@
     current = row;
     if (row) renderPick(row, ok, isAuto);
     else $('pick').innerHTML = '<p class="empty">No option fits this exact combination. Try fewer visas or a private office, or <a href="index.html#contact">ask us</a>.</p>';
-    $('peek-total').textContent = row ? money(row.q.t1) : '–';
-    $('peek-zone').textContent = row ? `${row.z.name} · see breakdown` : 'No option fits';
+    const slot = $('pick').querySelector('.pick-emirate');
+    emirateCtl.hidden = !slot;
+    if (slot) slot.append(emirateCtl);
     renderCompare(ok, no, row?.z.id);
+    renderAnswers();
     syncInputs();
     writeHash();
     updateShare(); // after writeHash so the shared link carries this exact quote
@@ -313,7 +327,25 @@
       render();
     });
   }
-  chips($('in-activity'), D.ACTIVITIES, 'a');
+  // Licence type cards + activity dropdown for that type
+  const typeEl = $('in-type');
+  const actSel = $('in-activity');
+  typeEl.innerHTML = D.LICENCE_TYPES.map((t) => `
+    <button type="button" class="type" data-value="${t.id}" role="radio" aria-checked="false">
+      <b>${esc(t.label)}</b><small>${esc(t.desc)}</small><span>Mainland from <em data-from="${t.id}"></em></span>
+    </button>`).join('');
+  typeEl.addEventListener('click', (e) => {
+    const b = e.target.closest('.type');
+    if (!b || b.dataset.value === activity().type) return;
+    state.a = D.ACTIVITIES.find((a) => a.type === b.dataset.value).id;
+    render();
+  });
+  actSel.addEventListener('change', () => { state.a = actSel.value; render(); });
+
+  const emirateCtl = $('emirate-ctl');
+  const emSel = $('in-emirate');
+  emSel.innerHTML = D.EMIRATES.map((e) => `<option value="${e.id}">${esc(e.name)}</option>`).join('');
+  emSel.addEventListener('change', () => { state.e = emSel.value; render(); });
   chips($('in-customers'), D.CUSTOMERS, 'c');
   bindChips($('in-office'), 'w');
   bindChips($('in-revenue'), 'r');
@@ -360,7 +392,12 @@
 
   function syncInputs() {
     const press = (el, val) => el.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.value === String(val))));
-    press($('in-activity'), state.a);
+    const type = activity().type;
+    typeEl.querySelectorAll('.type').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.value === type)));
+    D.LICENCE_TYPES.forEach((t) => { typeEl.querySelector(`[data-from="${t.id}"]`).textContent = money(D.MAINLAND.package[t.id]); });
+    actSel.innerHTML = D.ACTIVITIES.filter((a) => a.type === type).map((a) => `<option value="${a.id}">${esc(a.label)}</option>`).join('');
+    actSel.value = state.a;
+    emSel.value = state.e;
     press($('in-customers'), state.c);
     press($('in-office'), state.w);
     press($('in-revenue'), state.r);
@@ -382,7 +419,7 @@
     return [
       'Hello Bizabler-S, I used your setup cost calculator:',
       `• Option: ${z.name} (${z.emirate})`,
-      `• Activity: ${activityLabel()}`,
+      `• Licence: ${licenceType().label} · Activity: ${activityLabel()}`,
       `• Shareholders: ${state.owners}, investor visas: ${state.investors}, employee visas: ${state.employees}, family visas: ${state.dependants}`,
       `• Workspace: ${state.w === 'office' ? 'private office' : 'flexi-desk'}`,
       `• Year 1: ${money(q.t1)} · Year 2: ${money(q.t2)} · 3 years: ${money(q.three)}`,
@@ -393,7 +430,6 @@
   function updateShare() {
     const text = summary();
     $('act-wa').href = `https://wa.me/${PHONE}?text=${encodeURIComponent(text)}`;
-    $('peek-wa').href = $('act-wa').href;
     $('act-mail').href = `mailto:${EMAIL}?subject=${encodeURIComponent('Setup quote: ' + (current?.z.name || ''))}&body=${encodeURIComponent(text)}`;
   }
   $('act-link').addEventListener('click', async () => {
@@ -434,7 +470,7 @@
         need: `New company: ${typeLabel.toLowerCase()} (calculator quote)`,
         message: details,
         option: `${z.name} (${z.emirate})`,
-        activity: activityLabel(),
+        activity: `${licenceType().label}: ${activityLabel()}`,
         visas: `${state.investors} investor, ${state.employees} employee, ${state.dependants} family`,
         estimate: aed(q.t1),
         quoteLink: location.href,
@@ -454,14 +490,66 @@
     window.print();
   });
 
-  // Hide the phone price bar once the results are on screen
-  const peek = $('peek');
-  // While the bar shows, its own WhatsApp icon stands in for the floating one (which would cover the + buttons)
-  new IntersectionObserver(([en]) => {
-    peek.classList.toggle('hide', en.isIntersecting);
-    document.body.classList.toggle('peek-on', !en.isIntersecting);
-  }, { threshold: 0.05 })
-    .observe(document.querySelector('.calc-out'));
+  // ---------- steps: one question at a time, then the recommendations ----------
+  const steps = [...document.querySelectorAll('.calc-form fieldset')];
+  const backBtn = $('wiz-back');
+  const nextBtn = $('wiz-next');
+  const dots = $('wiz-dots');
+  let step = 0;
+  dots.innerHTML = steps.map((f, i) => `<li><button type="button" data-step="${i}" aria-label="Step ${i + 1}: ${esc(f.querySelector('legend').childNodes[1].textContent.trim())}"></button></li>`).join('');
+
+  const smooth = () => (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
+  function show(view, i = step, focus = true) {
+    const results = view === 'results';
+    state.v = results ? 1 : 0;
+    step = Math.max(0, Math.min(steps.length - 1, i));
+    const calc = $('calc');
+    calc.classList.toggle('is-results', results);
+    calc.classList.toggle('is-wizard', !results);
+    $('calc-form').hidden = results;
+    $('calc-out').hidden = !results;
+    steps.forEach((f, n) => { f.hidden = n !== step; });
+    $('wiz-count').textContent = `Step ${step + 1} of ${steps.length}`;
+    dots.querySelectorAll('button').forEach((b, n) => {
+      b.classList.toggle('done', n < step);
+      if (n === step) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+    });
+    backBtn.hidden = step === 0;
+    nextBtn.textContent = step === steps.length - 1 ? 'See my recommendations' : 'Next';
+    writeHash();
+    updateShare();
+    if (!focus) return;
+    calc.scrollIntoView({ behavior: smooth(), block: 'start' });
+    (results ? $('results-title') : steps[step].querySelector('legend')).focus({ preventScroll: true });
+  }
+  steps.forEach((f) => f.querySelector('legend').setAttribute('tabindex', '-1'));
+  backBtn.addEventListener('click', () => show('wizard', step - 1));
+  nextBtn.addEventListener('click', () => (step === steps.length - 1 ? show('results') : show('wizard', step + 1)));
+  dots.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-step]');
+    if (b) show('wizard', Number(b.dataset.step));
+  });
+  $('edit-answers').addEventListener('click', () => show('wizard', 0));
+
+  // Summary of the answers above the recommendation; each one jumps back to its step
+  function renderAnswers() {
+    const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+    const people = [plural(state.owners, 'shareholder'), plural(state.investors, 'investor visa'), plural(state.employees, 'employee visa'), plural(state.dependants, 'family visa')];
+    const items = [
+      activityLabel(),
+      D.CUSTOMERS.find((c) => c.id === state.c)?.label,
+      people.join(' · '),
+      state.w === 'office' ? 'Private office' : 'Flexi-desk / co-working',
+      document.querySelector(`#in-revenue [data-value="${state.r}"]`)?.textContent,
+      state.x.length ? D.ADDONS.filter((a) => state.x.includes(a.id)).map((a) => a.label.replace(/ \(.*\)|, first year/, '')).join(', ') : 'No add-ons',
+    ];
+    $('answers-list').innerHTML = items.map((t, i) => `<li><button type="button" data-step="${i}" title="Change this answer">${esc(t || '')}</button></li>`).join('');
+  }
+  $('answers-list').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-step]');
+    if (b) show('wizard', Number(b.dataset.step));
+  });
 
   render();
+  show(state.v ? 'results' : 'wizard', 0, false);
 })();
