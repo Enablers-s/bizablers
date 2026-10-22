@@ -151,9 +151,15 @@ h1 em, h2 em { font-style: italic; font-weight: 600; color: var(--bronze-600); }
   background: var(--bronze-grad) ; -webkit-mask: radial-gradient(circle, transparent 3px, #000 3.5px); mask: radial-gradient(circle, transparent 3px, #000 3.5px); }
 @media (max-width: 900px) { .paths { grid-template-columns: 1fr; } }
 
-.groups { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 48px; }
+.groups { display: grid; grid-template-columns: repeat(2, 1fr); align-items: start; gap: 20px; margin-top: 48px; }
 .group { padding: 30px; border-radius: var(--radius); background: rgba(255, 255, 255, 0.04); box-shadow: inset 0 0 0 1px rgba(217, 160, 102, 0.2); }
 .group h3 { display: flex; align-items: baseline; gap: 14px; font-size: 1.6rem; }
+.group summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; list-style: none; }
+.group summary::-webkit-details-marker { display: none; }
+.group summary::after { content: "+"; flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(217, 160, 102, 0.4); color: var(--bronze-300); font-size: 1.3rem; line-height: 1; }
+.group[open] summary::after { content: "\2212"; }
+.group summary:hover h3, .group summary:focus-visible h3 { color: var(--bronze-300); }
+.group summary:focus-visible { outline: 2px solid var(--bronze-300); outline-offset: 6px; border-radius: 4px; }
 .group h3 span { font: italic 600 1.1rem/1 var(--display); color: var(--bronze-300); }
 .group ul { margin-top: 16px; }
 .group li { padding: 11px 0; border-top: 1px solid rgba(246, 239, 226, 0.1); color: var(--on-dark-muted); }
