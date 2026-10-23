@@ -39,6 +39,24 @@
     if (e.target.closest('a')) { menu.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
   });
 
+  // Services dropdown: close on picking an item, clicking elsewhere or pressing Escape
+  const navSub = document.querySelector('.nav-sub');
+  navSub.addEventListener('click', (e) => { if (e.target.closest('a')) navSub.open = false; });
+  document.addEventListener('click', (e) => { if (!navSub.contains(e.target)) navSub.open = false; });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && navSub.open) { navSub.open = false; navSub.querySelector('summary').focus(); } });
+
+  // Open the service group a link points at (#svc-setup etc.), including on arrival from another page
+  const openGroup = (hash) => {
+    const el = hash.length > 1 && document.getElementById(hash.slice(1));
+    if (el && el.matches('details.group')) el.open = true;
+  };
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href*="#svc-"]');
+    if (a) openGroup(new URL(a.href).hash);
+  });
+  addEventListener('hashchange', () => openGroup(location.hash));
+  openGroup(location.hash);
+
   // Reveal cards as they scroll into view
   const io = new IntersectionObserver((entries) => {
     entries.forEach((en) => {

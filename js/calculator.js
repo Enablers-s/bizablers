@@ -19,6 +19,12 @@
     const open = menu.classList.toggle('open');
     toggle.setAttribute('aria-expanded', String(open));
   });
+
+  // Services dropdown: close on picking an item, clicking elsewhere or pressing Escape
+  const navSub = document.querySelector('.nav-sub');
+  navSub.addEventListener('click', (e) => { if (e.target.closest('a')) navSub.open = false; });
+  document.addEventListener('click', (e) => { if (!navSub.contains(e.target)) navSub.open = false; });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && navSub.open) { navSub.open = false; navSub.querySelector('summary').focus(); } });
   $('year').textContent = new Date().getFullYear();
   document.querySelectorAll('[data-checked]').forEach((el) => { el.textContent = D.CHECKED; });
 

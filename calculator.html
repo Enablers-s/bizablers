@@ -36,7 +36,18 @@
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
       <ul id="menu">
         <li><a href="index.html#setup">Company setup</a></li>
-        <li><a href="index.html#services">Services</a></li>
+        <li class="has-sub">
+          <details class="nav-sub">
+            <summary>Services</summary>
+            <ol class="sub">
+              <li><a href="index.html#svc-setup"><span>1</span>Set up</a></li>
+              <li><a href="index.html#svc-plan"><span>2</span>Plan &amp; present</a></li>
+              <li><a href="index.html#svc-structure"><span>3</span>Structure &amp; grow</a></li>
+              <li><a href="index.html#svc-expand"><span>4</span>Expand &amp; transact</a></li>
+              <li class="all"><a href="index.html#services">All services</a></li>
+            </ol>
+          </details>
+        </li>
         <li><a href="index.html#freezones">Free zones</a></li>
         <li><a href="calculator.html" aria-current="page">Cost calculator</a></li>
         <li><a href="https://enabler-s.vercel.app/" data-link="enabler" class="parent">Enabler-S <span aria-hidden="true">↗</span></a></li>
