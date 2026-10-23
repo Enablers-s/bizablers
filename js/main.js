@@ -13,6 +13,7 @@
     finablers: 'https://finablers.vercel.app/',
     trustablers: 'https://trustablers.vercel.app/',
     brandora: 'https://brandora-s.vercel.app/',
+    techablers: 'https://techablers.vercel.app/',
     movera: 'https://moveraglobal.com/',
   };
   const LOCAL = {
@@ -21,6 +22,7 @@
     finablers: '../finablers/index.html',
     trustablers: '../trustablers/index.html',
     brandora: '../brandora/index.html',
+    techablers: '../techablers/index.html',
     movera: 'https://moveraglobal.com/',
   };
   const isLocal = location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname);

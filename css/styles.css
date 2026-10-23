@@ -298,6 +298,7 @@ h1 em, h2 em { font-style: italic; font-weight: 600; color: var(--bronze-600); }
 .pm-card svg { width: 30px; }
 .pm-tabby { background: #3effc1; color: #292929; font-size: 1.45rem; letter-spacing: -0.03em; }
 .pm-tamara { background: linear-gradient(100deg, #f8c79a, #f2a7c4 45%, #b9a5f5 80%, #9fd6f2); color: #111; font-size: 1.3rem; letter-spacing: -0.01em; }
+.pm-nomod { background: #1b5cf3; color: #fff; font-size: 1.3rem; letter-spacing: -0.02em; }
 .pay-note { margin-top: 18px; font-size: 0.85rem; color: var(--muted); }
 @media (max-width: 860px) { .pay-grid { grid-template-columns: minmax(0, 1fr); } .pay-visual { order: 2; } }
 
