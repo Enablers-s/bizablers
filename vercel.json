@@ -1,7 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
+  "cleanUrls": false,
   "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/calculator.html",
+      "destination": "/calculator",
+      "permanent": true
+    },
     {
       "source": "/:path*",
       "has": [
@@ -23,6 +33,12 @@
       ],
       "destination": "https://www.bizabler-s.com/:path*",
       "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/calculator",
+      "destination": "/calculator.html"
     }
   ],
   "headers": [
