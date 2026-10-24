@@ -9,7 +9,7 @@
   // here and the matching href in index.html.
   const LIVE = {
     enabler: 'https://enabler-s.vercel.app/',
-    bizablers: 'https://bizablers.vercel.app/',
+    bizablers: 'https://www.bizabler-s.com/',
     finablers: 'https://finablers.vercel.app/',
     trustablers: 'https://trustablers.vercel.app/',
     brandora: 'https://brandora-s.vercel.app/',

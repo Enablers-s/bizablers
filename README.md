@@ -48,7 +48,7 @@ The five sites link to each other at these addresses (set in js/main.js (LIVE) a
 | Site | GitHub repo | Vercel project name | Live address |
 |---|---|---|---|
 | Enabler-S | Enablers-s/enabler-s | `enabler-s` | https://enabler-s.vercel.app |
-| Bizabler-S | Enablers-s/bizablers | `bizablers` | https://bizablers.vercel.app |
+| Bizabler-S | Enablers-s/bizablers | `bizablers` | https://www.bizabler-s.com (bizablers.vercel.app redirects here) |
 | Finablers | Enablers-s/finablers | `finablers` | https://finablers.vercel.app |
 | Trustablers | Enablers-s/trustablers | `trustablers` | https://trustablers.vercel.app |
 | Brandora | Enablers-s/brandora | `brandora-s` (brandora.vercel.app is taken) | https://brandora-s.vercel.app |
