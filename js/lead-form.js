@@ -31,6 +31,7 @@
       if (v !== undefined && v !== null && String(v).trim() !== '') body.append(id, String(v).trim());
     }
     await fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', body });
+    if (window.fbq) fbq('track', 'Lead', { content_category: 'Business Setup', content_name: data.source });
   }
 
   const validEmail = (s) => /^\S+@\S+\.\S+$/.test(String(s || '').trim());
